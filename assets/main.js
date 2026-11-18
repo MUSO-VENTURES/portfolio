@@ -99,15 +99,38 @@
     paint(0);
   }
 
-  // Contact form: GitHub Pages has no server, so open the visitor's email app
-  // with everything pre-filled. Swap for Formspree etc. later if you want inbox delivery.
+  // Contact form: delivered to your inbox through FormSubmit (no server needed on GitHub Pages).
+  // If JavaScript fails, the form still posts the normal way via its action attribute.
   const form = document.querySelector('#contact-form');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    const note = form.querySelector('.form-note');
+    const btn = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const f = new FormData(form);
-      const body = `${f.get('message')}\n\n${f.get('name')}\n${f.get('email')}`;
-      location.href = `mailto:${form.dataset.to}?subject=${encodeURIComponent(f.get('subject') || 'Project inquiry')}&body=${encodeURIComponent(body)}`;
+      const data = Object.fromEntries(new FormData(form));
+      if (data._honey) return; // bot trap
+      const subj = data.subject ? `Portfolio inquiry: ${data.subject}` : 'New portfolio inquiry';
+      data._subject = subj;
+      data._replyto = data.email;
+      btn.disabled = true; btn.textContent = 'Sending...';
+      note.className = 'form-note'; note.textContent = '';
+      try {
+        const res = await fetch(form.dataset.endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || String(json.success) === 'false') throw new Error(json.message || 'Send failed');
+        form.reset();
+        note.className = 'form-note ok';
+        note.textContent = "Thanks! Your message is on its way. I'll get back to you soon.";
+        btn.textContent = 'Message Sent';
+      } catch (err) {
+        note.className = 'form-note err';
+        note.innerHTML = 'Something went wrong. Please email me directly at <a href="mailto:smusseau.jobs@gmail.com">smusseau.jobs@gmail.com</a>.';
+        btn.disabled = false; btn.textContent = 'Send Message';
+      }
     });
   }
 })();
