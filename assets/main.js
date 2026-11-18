@@ -128,6 +128,11 @@
         btn.textContent = 'Message Sent';
       } catch (err) {
         note.className = 'form-note err';
+        if (/activ/i.test(err.message)) {
+          note.textContent = 'This form is being set up. Please try again shortly, or email me at smusseau.jobs@gmail.com.';
+          btn.disabled = false; btn.textContent = 'Send Message';
+          return;
+        }
         note.innerHTML = 'Something went wrong. Please email me directly at <a href="mailto:smusseau.jobs@gmail.com">smusseau.jobs@gmail.com</a>.';
         btn.disabled = false; btn.textContent = 'Send Message';
       }
