@@ -19,4 +19,4 @@ Static portfolio site. Plain HTML, CSS and JavaScript, no build step and no Figm
 GitHub Pages has no server, so the form opens the visitor's email app with the message filled in. To get submissions delivered straight to your inbox, sign up at formspree.io and set the form's `action` to your Formspree URL.
 
 ## Turning on GitHub Pages
-Settings > Pages > Source: **Deploy from a branch** > Branch: `main`, folder `/ (root)` > Save. The site goes live at `https://muso-ventures.github.io/portfolio/` in a minute or two.
+Settings > Pages > Source: **Deploy from a branch** > Branch: `main`, folder `/ (root)` > Save. The site goes live at `https://portfolio.muso-ventures.com` (custom domain, set by the CNAME file) in a minute or two.
